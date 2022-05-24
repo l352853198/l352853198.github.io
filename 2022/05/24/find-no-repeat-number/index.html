@@ -21,28 +21,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lizhengdong.tech","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="redis分布式锁 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&amp;#x3">
+    <meta name="description" content="如何在大量的数据中找出不重复的整数？题目描述在 2.5 亿个整数中找出不重复的整数。注意：内存不足以容纳这 2.5 亿个整数。 解答思路方法一：分治法与前面的题目方法类似，先将 2.5 亿个数划分到多个小文件，用 HashSet&#x2F;HashMap 找出每个小文件中不重复的整数，再合并每个子结果，即为最终结果。 方法二：位图法位图，就是用一个或多个 bit 来标记某个元素对应的值，而键就是该">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis分布式锁">
-<meta property="og:url" content="http://lizhengdong.tech/2022/05/08/hello-world/index.html">
+<meta property="og:title" content="小李的家">
+<meta property="og:url" content="http://lizhengdong.tech/2022/05/24/find-no-repeat-number/index.html">
 <meta property="og:site_name" content="小李的家">
-<meta property="og:description" content="redis分布式锁 &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&amp;#x3">
+<meta property="og:description" content="如何在大量的数据中找出不重复的整数？题目描述在 2.5 亿个整数中找出不重复的整数。注意：内存不足以容纳这 2.5 亿个整数。 解答思路方法一：分治法与前面的题目方法类似，先将 2.5 亿个数划分到多个小文件，用 HashSet&#x2F;HashMap 找出每个小文件中不重复的整数，再合并每个子结果，即为最终结果。 方法二：位图法位图，就是用一个或多个 bit 来标记某个元素对应的值，而键就是该">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-07T17:37:07.511Z">
-<meta property="article:modified_time" content="2022-05-07T17:37:07.511Z">
+<meta property="article:published_time" content="2022-05-24T11:39:58.927Z">
+<meta property="article:modified_time" content="2022-05-13T12:08:59.000Z">
 <meta property="article:author" content="Len">
 <meta property="article:tag" content="小李">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://lizhengdong.tech/2022/05/08/hello-world/">
+<link rel="canonical" href="http://lizhengdong.tech/2022/05/24/find-no-repeat-number/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://lizhengdong.tech/2022/05/08/hello-world/","path":"2022/05/08/hello-world/","title":"redis分布式锁"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://lizhengdong.tech/2022/05/24/find-no-repeat-number/","path":"2022/05/24/find-no-repeat-number/","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>redis分布式锁 | 小李的家</title>
+<title> | 小李的家</title>
   
 
 
@@ -145,7 +145,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么要使用分布式锁？</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Redis%E4%B8%AD%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">Redis中分布式锁的实现</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number"></span> <span class="nav-text">测试</span></a></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%9C%A8%E5%A4%A7%E9%87%8F%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%AD%E6%89%BE%E5%87%BA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E6%95%B4%E6%95%B0%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">如何在大量的数据中找出不重复的整数？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">题目描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E7%AD%94%E6%80%9D%E8%B7%AF"><span class="nav-number">1.2.</span> <span class="nav-text">解答思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%88%86%E6%B2%BB%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">方法一：分治法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E4%BD%8D%E5%9B%BE%E6%B3%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">方法二：位图法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">方法总结</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -203,7 +203,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://lizhengdong.tech/2022/05/08/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://lizhengdong.tech/2022/05/24/find-no-repeat-number/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -216,12 +216,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="redis分布式锁 | 小李的家">
+      <meta itemprop="name" content=" | 小李的家">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          redis分布式锁
+          
         </h1>
 
         <div class="post-meta-container">
@@ -232,7 +232,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-05-08 01:37:07" itemprop="dateCreated datePublished" datetime="2022-05-08T01:37:07+08:00">2022-05-08</time>
+      <time title="创建时间：2022-05-24 19:39:58" itemprop="dateCreated datePublished" datetime="2022-05-24T19:39:58+08:00">2022-05-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-05-13 20:08:59" itemprop="dateModified" datetime="2022-05-13T20:08:59+08:00">2022-05-13</time>
     </span>
 
   
@@ -252,14 +259,34 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>redis分布式锁</p>
-<p>&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</p>
-<h6 id="为什么要使用分布式锁？"><a href="#为什么要使用分布式锁？" class="headerlink" title="为什么要使用分布式锁？"></a>为什么要使用分布式锁？</h6><p>在实际项目中见过分布式锁后，就不难理解为什么要用分布式锁了。总的来说就是分布式系统要访问共享资源，为了避免并发访问资源带来的错误，我们为共享资源添加一把锁，让各个访问互斥，保证并发访问的安全性，这就是使用分布式锁的原因。</p>
-<h6 id="Redis中分布式锁的实现"><a href="#Redis中分布式锁的实现" class="headerlink" title="Redis中分布式锁的实现"></a>Redis中分布式锁的实现</h6><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p><strong>命令格式：</strong></p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SETNX key value</span><br></pre></td></tr></table></figure>
+        <h2 id="如何在大量的数据中找出不重复的整数？"><a href="#如何在大量的数据中找出不重复的整数？" class="headerlink" title="如何在大量的数据中找出不重复的整数？"></a>如何在大量的数据中找出不重复的整数？</h2><h3 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h3><p>在 2.5 亿个整数中找出不重复的整数。注意：内存不足以容纳这 2.5 亿个整数。</p>
+<h3 id="解答思路"><a href="#解答思路" class="headerlink" title="解答思路"></a>解答思路</h3><h4 id="方法一：分治法"><a href="#方法一：分治法" class="headerlink" title="方法一：分治法"></a>方法一：分治法</h4><p>与前面的题目方法类似，先将 2.5 亿个数划分到多个小文件，用 HashSet&#x2F;HashMap 找出每个小文件中不重复的整数，再合并每个子结果，即为最终结果。</p>
+<h4 id="方法二：位图法"><a href="#方法二：位图法" class="headerlink" title="方法二：位图法"></a>方法二：位图法</h4><p><strong>位图</strong>，就是用一个或多个 bit 来标记某个元素对应的值，而键就是该元素。采用位作为单位来存储数据，可以大大节省存储空间。</p>
+<p>位图通过使用位数组来表示某些元素是否存在。它可以用于快速查找，判重，排序等。不是很清楚？我先举个小例子。</p>
+<p>假设我们要对 <code>[0,7]</code> 中的 5 个元素 (6, 4, 2, 1, 5) 进行排序，可以采用位图法。0~7 范围总共有 8 个数，只需要 8bit，即 1 个字节。首先将每个位都置 0：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 0 0 0 0 0</span><br></pre></td></tr></table></figure>
 
-<p>将key的值设为value，当且仅当key不存在。若给定的key已经存在，则SETNX不做任何动作。SETNX是SET if Not eXists的简写。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然后遍历 5 个元素，首先遇到 6，那么将下标为 6 的位的 0 置为 1；接着遇到 4，把下标为 4 的位 的 0 置为 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 0 0 1 0 1 0</span><br></pre></td></tr></table></figure>
+
+<p>依次遍历，结束后，位数组是这样的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 1 1 0 1 1 1 0</span><br></pre></td></tr></table></figure>
+
+<p>每个为 1 的位，它的下标都表示了一个数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">for i in range(8):</span><br><span class="line">    if bits[i] == 1:</span><br><span class="line">        print(i)</span><br></pre></td></tr></table></figure>
+
+<p>这样我们其实就已经实现了排序。</p>
+<p>对于整数相关的算法的求解，<strong>位图法</strong>是一种非常实用的算法。假设 int 整数占用 4B，即 32bit，那么我们可以表示的整数的个数为 2<sup>32</sup>。</p>
+<p><strong>那么对于这道题</strong>，我们用 2 个 bit 来表示各个数字的状态：</p>
+<ul>
+<li>00 表示这个数字没出现过；</li>
+<li>01 表示这个数字出现过一次（即为题目所找的不重复整数）；</li>
+<li>10 表示这个数字出现了多次。</li>
+</ul>
+<p>那么这 2<sup>32</sup> 个整数，总共所需内存为 2<sup>32</sup>*2b&#x3D;1GB。因此，当可用内存超过 1GB 时，可以采用位图法。假设内存满足位图法需求，进行下面的操作：</p>
+<p>遍历 2.5 亿个整数，查看位图中对应的位，如果是 00，则变为 01，如果是 01 则变为 10，如果是 10 则保持不变。遍历结束后，查看位图，把对应位是 01 的整数输出即可。</p>
+<p>当然，本题中特别说明：<strong>内存不足以容纳这 2.5 亿个整数</strong>，2.5 亿个整数的内存大小为：2.5e8&#x2F;1024&#x2F;1024&#x2F;1024 * 4&#x3D;3.72GB， 如果内存大于 1GB，是可以通过位图法解决的。</p>
+<h3 id="方法总结"><a href="#方法总结" class="headerlink" title="方法总结"></a>方法总结</h3><p><strong>判断数字是否重复的问题</strong>，位图法是一种非常高效的方法，当然前提是：内存要满足位图法所需要的存储空间。</p>
 
     </div>
 
@@ -273,12 +300,12 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/04/26/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/" rel="prev" title="redis分布式锁">
-                  <i class="fa fa-chevron-left"></i> redis分布式锁
+                <a href="/2022/05/24/find-mid-value-in-500-millions/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/05/24/find-mid-value-in-500-millions/" rel="next" title="">
+                <a href="/2022/05/24/find-rank-top-500-numbers/" rel="next" title="">
                    <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
