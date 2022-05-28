@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lizhengdong.tech","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="分布式 IDID介绍日常开发过程中，各类数据在数据库都会有个唯一id相对应，形成1对1的关系 ，比如说一个系统中用户的id，一个id对应一个用户，作为唯一标识，就如同用户的身份证一样； 分布式 ID？分布式id是一种场景下的id，其应对的是分布式情况下，不同服务器的id； 如mysql的一些访问量比较大的表，需要进行分库操作，那么分库后的自增，可能出现同一id对应两个用户的现象。那么就需要生成分布">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式 ID">
+<meta property="og:url" content="http://lizhengdong.tech/2022/05/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84id%E7%94%9F%E6%88%90/index.html">
+<meta property="og:site_name" content="小李的家">
+<meta property="og:description" content="分布式 IDID介绍日常开发过程中，各类数据在数据库都会有个唯一id相对应，形成1对1的关系 ，比如说一个系统中用户的id，一个id对应一个用户，作为唯一标识，就如同用户的身份证一样； 分布式 ID？分布式id是一种场景下的id，其应对的是分布式情况下，不同服务器的id； 如mysql的一些访问量比较大的表，需要进行分库操作，那么分库后的自增，可能出现同一id对应两个用户的现象。那么就需要生成分布">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-03T13:38:00.596Z">
+<meta property="article:modified_time" content="2022-05-28T14:01:35.457Z">
+<meta property="article:author" content="Len">
+<meta property="article:tag" content="小李">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://lizhengdong.tech/2022/05/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84id%E7%94%9F%E6%88%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://lizhengdong.tech/2022/05/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84id%E7%94%9F%E6%88%90/","path":"2022/05/03/分布式的id生成/","title":"分布式 ID"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式 ID | 小李的家</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">小李的家</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">技术专栏</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID"><span class="nav-number">1.</span> <span class="nav-text">分布式 ID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ID%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">ID介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F-ID%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">分布式 ID？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BB%E9%94%AE%E8%87%AA%E5%A2%9E"><span class="nav-number">2.0.1.</span> <span class="nav-text">数据库主键自增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E5%8F%B7%E6%AE%B5%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.0.2.</span> <span class="nav-text">数据库号段模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Redis%EF%BC%9A%E5%88%86%E5%B8%83%E5%BC%8F%E8%87%AA%E5%A2%9Eid"><span class="nav-number">2.0.3.</span> <span class="nav-text">Redis：分布式自增id</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UUID"><span class="nav-number">2.1.1.</span> <span class="nav-text">UUID</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Snowflake-%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.2.</span> <span class="nav-text">Snowflake(雪花算法)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E6%A1%86%E6%9E%B6"><span class="nav-number">2.2.</span> <span class="nav-text">开源框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UidGenerator%EF%BC%9Axx"><span class="nav-number">2.2.1.</span> <span class="nav-text">UidGenerator：xx</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Leaf"><span class="nav-number">2.2.2.</span> <span class="nav-text">Leaf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tinyid"><span class="nav-number">2.2.3.</span> <span class="nav-text">Tinyid</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Len</p>
+  <div class="site-description" itemprop="description">深耕技术</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="/591753748@qq.com" title="E-Mail → 591753748@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://lizhengdong.tech/2022/05/03/%E5%88%86%E5%B8%83%E5%BC%8F%E7%9A%84id%E7%94%9F%E6%88%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Len">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小李的家">
+      <meta itemprop="description" content="深耕技术">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式 ID | 小李的家">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式 ID
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-03 21:38:00" itemprop="dateCreated datePublished" datetime="2022-05-03T21:38:00+08:00">2022-05-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-05-28 22:01:35" itemprop="dateModified" datetime="2022-05-28T22:01:35+08:00">2022-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">分布式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="分布式-ID"><a href="#分布式-ID" class="headerlink" title="分布式 ID"></a>分布式 ID</h2><h3 id="ID介绍"><a href="#ID介绍" class="headerlink" title="ID介绍"></a>ID介绍</h3><p>日常开发过程中，各类数据在数据库都会有个唯一id相对应，形成1对1的关系 ，比如说一个系统中用户的id，一个id对应一个用户，作为唯一标识，就如同用户的身份证一样；</p>
+<h3 id="分布式-ID？"><a href="#分布式-ID？" class="headerlink" title="分布式 ID？"></a>分布式 ID？</h3><p>分布式id是一种场景下的id，其应对的是分布式情况下，不同服务器的id；</p>
+<p>如mysql的一些访问量比较大的表，需要进行分库操作，那么分库后的自增，可能出现同一id对应两个用户的现象。那么就需要生成分布式id来应对分布式的场景，他的目的还是为了在分布式的情况下保证1对1 的关系</p>
+<p>分布式 ID 需要满足下面这些要求：</p>
+<p>全局唯一 ；</p>
+<p>安全 ；</p>
+<p>有序递增；</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><h4 id="数据库主键自增"><a href="#数据库主键自增" class="headerlink" title="数据库主键自增"></a>数据库主键自增</h4><p>通过关系型数据库的自增主键产生来唯一的 ID：该数据库的该表只做自增id这么一件事，每次的自增id都从这里取</p>
+<ul>
+<li><strong>优点</strong> ：实现简单，消耗存储很低</li>
+<li><strong>缺点</strong> ： 如果需求过大，对该数据库压力较大</li>
+</ul>
+<h4 id="数据库号段模式"><a href="#数据库号段模式" class="headerlink" title="数据库号段模式"></a>数据库号段模式</h4><p>数据库的号段模式目前主流生成分布式id的方式。像滴滴开源的tinyid 就是基于这种方式来做的。</p>
+<p>以 MySQL 来讲解此方式。</p>
+<p><strong>1.创建一个数据库表。</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `idTable` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `current_max_id` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;当前最大id&#x27;</span>,</span><br><span class="line">  `step` <span class="type">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;号段的长度&#x27;</span>,</span><br><span class="line">  `version` <span class="type">int</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;版本号&#x27;</span>,</span><br><span class="line">  `type`    <span class="type">int</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;业务类型&#x27;</span>,</span><br><span class="line">   <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br></pre></td></tr></table></figure>
+
+<p><code>current_max_id</code> 字段</p>
+<p><code>step</code>字段代表范围值</p>
+<p>获取的批量 id范围是： <code>current_max_id ~ current_max_id+step</code>。</p>
+<p><code>version</code> 字段主要用于解决并发问题（乐观锁）,<code>type</code> 主要用于表示业务类型。</p>
+<p>减少数据库的查询</p>
+<p><strong>数据库号段模式的优缺点:</strong></p>
+<ul>
+<li><strong>优点</strong> ：ID 有序递增、存储消耗空间小</li>
+<li><strong>缺点</strong> ：安全问题，电商项目，都能知道你的订单数量等了，这非常重要</li>
+</ul>
+<h4 id="Redis：分布式自增id"><a href="#Redis：分布式自增id" class="headerlink" title="Redis：分布式自增id"></a>Redis：分布式自增id</h4><p>优点： 性能高，有序</p>
+<p>缺点： 不安全</p>
+<h3 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h3><h4 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h4><p>jdk自带生成的uuid一般是通过时间、mac地址、命名空间、随机性等一些规则进行生成；</p>
+<p>缺点：过长，存储空间大；</p>
+<p>查询影响性能；</p>
+<h4 id="Snowflake-雪花算法"><a href="#Snowflake-雪花算法" class="headerlink" title="Snowflake(雪花算法)"></a>Snowflake(雪花算法)</h4><ul>
+<li><strong>第 0 位</strong>： 符号位（标识正负），始终为 0，没有用，不用管。</li>
+<li><strong>第 1~41 位</strong> ：一共 41 位，用来表示时间戳，单位是毫秒，可以支撑 2 ^41 毫秒（约 69 年）</li>
+<li><strong>第 42~52 位</strong> ：一共 10 位，一般来说，前 5 位表示机房 ID，后 5 位表示机器 ID（实际项目中可以根据实际情况调整）。这样就可以区分不同集群&#x2F;机房的节点。</li>
+<li><strong>第 53~64 位</strong> ：一共 12 位，用来表示序列号。 序列号为自增值，代表单台机器每毫秒能够产生的最大 ID 数(2^12 &#x3D; 4096),也就是说单台机器每毫秒最多可以生成 4096 个 唯一 ID。</li>
+</ul>
+<p>我们再来看看 Snowflake 算法的优缺点 ：</p>
+<ul>
+<li><strong>优点</strong> ：生成速度比较快、id自增、灵活</li>
+<li><strong>缺点</strong> ：依赖于时间都有可能产品重复id，因为不同机器的时间可能有误差，不能保证时间的唯一性。</li>
+<li></li>
+</ul>
+<h3 id="开源框架"><a href="#开源框架" class="headerlink" title="开源框架"></a>开源框架</h3><h4 id="UidGenerator：xx"><a href="#UidGenerator：xx" class="headerlink" title="UidGenerator：xx"></a>UidGenerator：xx</h4><h4 id="Leaf"><a href="#Leaf" class="headerlink" title="Leaf"></a>Leaf</h4><h4 id="Tinyid"><a href="#Tinyid" class="headerlink" title="Tinyid"></a>Tinyid</h4><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>类似一些其他的中间件，比如zookeeper也能帮助我们生成唯一 ID。根据自己项目，在限定的资源下来完成id的生成工作。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/04/22/%E7%AE%97%E6%B3%95-%E9%9B%B6%E7%9F%A9%E9%98%B5/" rel="prev" title="零矩阵">
+                  <i class="fa fa-chevron-left"></i> 零矩阵
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/05/28/jwt/" rel="next" title="JWT 身份认证">
+                  JWT 身份认证 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Len</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
