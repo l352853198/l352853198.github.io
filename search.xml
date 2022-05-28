@@ -219,8 +219,14 @@
     <content><![CDATA[]]></content>
   </entry>
   <entry>
-    <title></title>
-    <url>/2022/05/28/springSecurity/</url>
+    <title>security</title>
+    <url>/2022/03/13/springSecurity/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>安全</category>
+      </categories>
+      <tags>
+        <tag>认证</tag>
+      </tags>
   </entry>
 </search>
