@@ -85,7 +85,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-schedule"><a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a></li>
   </ul>
 </nav>
 
@@ -144,6 +144,9 @@
   </nav>
 </div>
   <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/l352853198" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;l352853198" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
       <span class="links-of-author-item">
         <a href="/591753748@qq.com" title="E-Mail → 591753748@qq.com"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
       </span>
@@ -211,7 +214,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-05-28 21:26:55 / 修改时间：21:26:42" itemprop="dateCreated datePublished" datetime="2022-05-28T21:26:55+08:00">2022-05-28</time>
+      <time title="创建时间：2022-05-28 21:26:55 / 修改时间：22:05:12" itemprop="dateCreated datePublished" datetime="2022-05-28T21:26:55+08:00">2022-05-28</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -265,13 +268,13 @@
 <h3 id="2-token-的刷新时长问题"><a href="#2-token-的刷新时长问题" class="headerlink" title="2.token 的刷新时长问题"></a>2.token 的刷新时长问题</h3><p>token 有效期一般都建议设置的不太长，那么 token 过期后如何认证，如何实现动态刷新 token，避免用户经常需要重新登录？</p>
 <p>我们先来看看在 Session 认证中一般的做法：<strong>假如 session 的有效期30分钟，如果 30 分钟内用户有访问，就把 session 有效期延长30分钟。</strong></p>
 <ol>
-<li><p><strong>验证成功后刷新token</strong>：这种方案满足于大部分场景。假设服务端给的 token 有效期设置为30分钟，服务端每次进行校验时，如果发现 token 的有效期马上快过期了，服务端就重新生成 token 给客户端。客户端每次请求都检查新旧token，如果不一致，则更新本地的token。这种做法的问题是仅仅在快过期的时候请求才会更新 token ,对客户端不是很友好。</p>
+<li><p><strong>验证成功后刷新token</strong>：这种方案满足于大部分场景。假设服务端给的 token 有效期设置为60分钟，服务端每次进行校验时，如果发现 token 的有效期马上快过期了，服务端就重新生成 token 给客户端。客户端每次请求都检查新旧token，如果不一致，则更新本地的token。这种做法的问题是仅仅在快过期的时候请求才会更新 token ,对客户端不是很友好。</p>
 </li>
 <li><p><strong>每次请求都返回新 token</strong> :开销会比较大，每次都需要自己是生成。</p>
 </li>
 <li><p><strong>token 有效期设置到半夜</strong> ：对于安全性不高的情况下可以满足，即便晚上的用户出了问题，出现概率也很低。</p>
 </li>
-<li><p><strong>用户登录返回两个 token</strong> ：第一个是 accessToken ，它的过期时间 token 本身的过期时间比如半个小时，另外一个是 refreshToken 它的过期时间更长一点比如为1天。客户端登录后，将 accessToken和refreshToken 保存在本地，每次访问将 accessToken 传给服务端。服务端校验 accessToken 的有效性，如果过期的话，就将 refreshToken 传给服务端。如果有效，服务端就生成新的 accessToken 给客户端。否则，客户端就重新登录即可。</p>
+<li><p><strong>用户登录返回两个 token</strong> ：第一个是 userToken ，当前登录有效期，refreshToken为一个固定较长时间的token。客户端登录后，将 userToken和refreshToken 保存在本地，每次访问将 userToken 传给服务端。服务端校验 accessToken 的有效性，如果过期的话，就将 refreshToken 传给服务端。如果有效，服务端就生成新的 userToken 给客户端。否则，客户端就重新登录即可。</p>
 <p>缺陷：</p>
 <ol>
 <li>需要前端业务逻辑进行配合；</li>
@@ -857,6 +860,9 @@
 <script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
 
   
+  <script src="https://embed.widgetpack.com/widget.js" async></script>
+  <script class="next-config" data-name="rating" type="application/json">{"enable":true,"id":null,"color":"#fc6423"}</script>
+  <script src="/js/third-party/rating.js"></script>
 
 
 
