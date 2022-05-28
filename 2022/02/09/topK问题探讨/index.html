@@ -21,26 +21,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"lizhengdong.tech","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.11.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="深耕技术">
-<meta property="og:type" content="website">
-<meta property="og:title" content="小李的家">
-<meta property="og:url" content="http://lizhengdong.tech/index.html">
+    <meta name="description" content="大数据中 TopK 问题的常用套路第一次写博客，记录一下对于topK问题的总结。 对于海量数据到处理经常会涉及到 topK 问题。在设计数据结构和算法的时候，主要需要考虑的应该是当前算法（包括数据结构）跟给定情境（比如数据量级、数据类型）的适配程度，和当前问题最核心的瓶颈（如降低时间复杂度，还是降低空间复杂度）是什么。 首先，我们来举几个常见的 topK 问题的例子：  给定 100 个 int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="topK问题">
+<meta property="og:url" content="http://lizhengdong.tech/2022/02/09/topK%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8/index.html">
 <meta property="og:site_name" content="小李的家">
-<meta property="og:description" content="深耕技术">
+<meta property="og:description" content="大数据中 TopK 问题的常用套路第一次写博客，记录一下对于topK问题的总结。 对于海量数据到处理经常会涉及到 topK 问题。在设计数据结构和算法的时候，主要需要考虑的应该是当前算法（包括数据结构）跟给定情境（比如数据量级、数据类型）的适配程度，和当前问题最核心的瓶颈（如降低时间复杂度，还是降低空间复杂度）是什么。 首先，我们来举几个常见的 topK 问题的例子：  给定 100 个 int">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-09T11:56:53.074Z">
+<meta property="article:modified_time" content="2022-05-24T12:54:25.693Z">
 <meta property="article:author" content="Len">
 <meta property="article:tag" content="小李">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://lizhengdong.tech/">
+<link rel="canonical" href="http://lizhengdong.tech/2022/02/09/topK%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://lizhengdong.tech/2022/02/09/topK%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8/","path":"2022/02/09/topK问题探讨/","title":"topK问题"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>小李的家</title>
+<title>topK问题 | 小李的家</title>
   
 
 
@@ -70,7 +72,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">小李的家</h1>
+      <p class="site-title">小李的家</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">技术专栏</p>
@@ -103,7 +105,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -116,6 +118,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%AD-TopK-%E9%97%AE%E9%A2%98%E7%9A%84%E5%B8%B8%E7%94%A8%E5%A5%97%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">大数据中 TopK 问题的常用套路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%A0%86%E6%8E%92%E5%BA%8F%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">1. 堆排序法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%B1%BB%E4%BC%BC%E5%BF%AB%E6%8E%92%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">2. 类似快排法</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -171,124 +174,17 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
 
-    
+
+  
 
 
 <div class="post-block">
   
   
 
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://lizhengdong.tech/2022/03/24/%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Len">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="小李的家">
-      <meta itemprop="description" content="深耕技术">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 小李的家">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/03/24/%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83/" class="post-title-link" itemprop="url">认证授权基础</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-03-24 21:32:03" itemprop="dateCreated datePublished" datetime="2022-03-24T21:32:03+08:00">2022-03-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-05-28 17:06:13" itemprop="dateModified" datetime="2022-05-28T17:06:13+08:00">2022-05-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">系统设计</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="认证-和授权？"><a href="#认证-和授权？" class="headerlink" title="认证 和授权？"></a>认证 和授权？</h2><p>这是一个绝大多数人都会混淆的问题。首先先从读音上来认识这两个名词，很多人都会把它俩的读音搞混，所以我建议你先先去查一查这两个单词到底该怎么读，他们的具体含义是什么。</p>
-<ul>
-<li><strong>Authentication（认证）</strong> 是验证您的身份的凭据（例如用户名&#x2F;用户 ID 和密码），通过这个凭据，系统得以知道你就是你，也就是说系统存在你这个用户。所以，Authentication 被称为身份&#x2F;用户验证。</li>
-<li><strong>Authorization（授权）</strong> 发生在 <strong>Authentication（认证）</strong> 之后。授权嘛，光看意思大家应该就明白，它主要掌管我们访问系统的权限。比如有些特定资源只能具有特定权限的人才能访问比如 admin，有些对系统资源操作比如删除、添加、更新只能特定人才具有。</li>
-</ul>
-<p>认证、授权这两个功能一般在我们的系统中被结合在一起使用，目的就是为了保护我们系统的安全性。</p>
-<h2 id="RBAC-模型"><a href="#RBAC-模型" class="headerlink" title="RBAC 模型"></a>RBAC 模型</h2><p>RBAC 即基于角色的权限访问控制（Role-Based Access Control）。这是一种通过角色关联权限，角色同时又关联用户的授权的方式。</p>
-<p>简单地说：一个用户可以拥有若干角色，每一个角色又可以被分配若干权限，这样就构造成“用户-角色-权限” 的授权模型。在这种模型中，用户与角色、角色与权限之间构成了多对多的关系，</p>
-<p><strong>在 RBAC 中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。</strong></p>
-<p>这样的目的，就是权限与角色进行绑定，用户在页面控制的是角色的权限，而不是用户的权限，提高灵活度，又省去每一个用户分配权限的麻烦程度，这是一种折中的方式，去进行权限控制。</p>
-<p>通过这个权限模型，我们可以创建不同的角色并为不同的角色分配不同的权限范围（菜单）。</p>
-<p>通常来说，如果系统对于权限控制要求比较严格的话，一般都会选择使用 RBAC 模型来做权限控制。</p>
-<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p><code>Cookie</code> 和 <code>Session</code> 都是用来跟踪浏览器用户身份的会话方式，但是两者的应用场景不太一样。</p>
-<p>维基百科是这样定义 <code>Cookie</code> 的：</p>
-<blockquote>
-<p><code>Cookies</code> 是某些网站为了辨别用户身份而储存在用户本地终端上的数据（通常经过加密）。</p>
-</blockquote>
-<p>简单来说： **<code>Cookie</code> 存放在客户端，用于存储客户信息。</p>
-<p>下面是 <code>Cookie</code> 的一些应用案例：</p>
-<ol>
-<li>我们在 <code>Cookie</code> 中保存已经登录过的用户信息，下次访问网站的时候页面可以自动帮你登录的一些基本信息给填了。除此之外，<code>Cookie</code> 还能保存用户首选项，主题和其他设置信息。</li>
-<li>使用 <code>Cookie</code> 保存 <code>SessionId</code> 或者 <code>Token</code> ，向后端发送请求的时候带上 <code>Cookie</code>，这样后端就能取到 <code>Session</code> 或者 <code>Token</code> 了。这样就能记录用户当前的状态了，因为 HTTP 协议是无状态的。</li>
-<li><code>Cookie</code> 还可以用来记录和分析用户行为。举个简单的例子你在网上购物的时候，因为 HTTP 协议是没有状态的，如果服务器想要获取你在某个页面的停留状态或者看了哪些商品，一种常用的实现方式就是将这些信息存放在 <code>Cookie</code></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://lizhengdong.tech/2022/02/09/topK%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -302,13 +198,13 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 小李的家">
+      <meta itemprop="name" content="topK问题 | 小李的家">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/02/09/topK%E9%97%AE%E9%A2%98%E6%8E%A2%E8%AE%A8/" class="post-title-link" itemprop="url">topK问题</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          topK问题
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -329,6 +225,13 @@
     </span>
 
   
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
 </div>
 
         </div>
@@ -338,7 +241,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="大数据中-TopK-问题的常用套路"><a href="#大数据中-TopK-问题的常用套路" class="headerlink" title="大数据中 TopK 问题的常用套路"></a>大数据中 TopK 问题的常用套路</h2><p>第一次写博客，记录一下对于topK问题的总结。</p>
+        <h2 id="大数据中-TopK-问题的常用套路"><a href="#大数据中-TopK-问题的常用套路" class="headerlink" title="大数据中 TopK 问题的常用套路"></a>大数据中 TopK 问题的常用套路</h2><p>第一次写博客，记录一下对于topK问题的总结。</p>
 <p>对于海量数据到处理经常会涉及到 topK 问题。在设计数据结构和算法的时候，主要需要考虑的应该是当前算法（包括数据结构）跟给定情境（比如数据量级、数据类型）的适配程度，和当前问题最核心的瓶颈（如降低时间复杂度，还是降低空间复杂度）是什么。</p>
 <p>首先，我们来举几个常见的 topK 问题的例子：</p>
 <ol>
@@ -365,7 +268,6 @@
 <br>
 
 
-      
     </div>
 
     
@@ -373,11 +275,22 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/24/%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83/" rel="next" title="认证授权基础">
+                  认证授权基础 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
     </footer>
   </article>
 </div>
+
 
 
 
