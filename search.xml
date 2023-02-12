@@ -85,6 +85,17 @@
       </tags>
   </entry>
   <entry>
+    <title>security</title>
+    <url>/2022/03/13/springSecurity/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>安全</category>
+      </categories>
+      <tags>
+        <tag>认证</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JWT 身份认证</title>
     <url>/2022/06/02/spring%E7%9B%91%E5%90%AC%E5%99%A8/</url>
     <content><![CDATA[<p>关于jwt的一些浅薄理解</p>
@@ -171,17 +182,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>security</title>
-    <url>/2022/03/13/springSecurity/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>安全</category>
-      </categories>
-      <tags>
-        <tag>认证</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>零矩阵</title>
     <url>/2022/04/22/%E7%AE%97%E6%B3%95-%E9%9B%B6%E7%9F%A9%E9%98%B5/</url>
     <content><![CDATA[<p>编写一种算法，若M × N矩阵中某个元素为0，则将其所在的行与列清零。</p>
@@ -197,6 +197,41 @@
       </categories>
       <tags>
         <tag>矩阵</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>认证授权基础</title>
+    <url>/2022/03/24/%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83/</url>
+    <content><![CDATA[<h2 id="认证-和授权？"><a href="#认证-和授权？" class="headerlink" title="认证 和授权？"></a>认证 和授权？</h2><p>这是一个绝大多数人都会混淆的问题。首先先从读音上来认识这两个名词，很多人都会把它俩的读音搞混，所以我建议你先先去查一查这两个单词到底该怎么读，他们的具体含义是什么。</p>
+<ul>
+<li><strong>认证</strong> ：验证其身份，一般来说，登陆成功，就是知道了你的身份可以登录，就算认证成功。</li>
+<li><strong>授权</strong> ：认证成功，根据当前用户身份，让系统知道该用户能够访问哪一些权限。</li>
+</ul>
+<p>认证、授权这两个功能一般在我们的系统中被结合在一起使用，目的就是为了保护我们系统的安全性：目前有shiro，spring security这些框架能够做一些事情，spring security是基于spring开发的，完美适配，不过该框架过重，shiro需要和spring进行整合，当然，如果是简单的认证过程，通过随机生成的token就能够完成客户端以及服务器间的认证过程。</p>
+<h2 id="RBAC-模型"><a href="#RBAC-模型" class="headerlink" title="RBAC 模型"></a>RBAC 模型</h2><p>RBAC 即基于角色的权限访问控制（Role-Based Access Control）。这是一种通过角色关联权限，角色同时又关联用户的授权的方式。</p>
+<p>简单地说：一个用户可以拥有若干角色，每一个角色又可以被分配若干权限，这样就构造成“用户-角色-权限” 的授权模型。在这种模型中，用户与角色、角色与权限之间构成了多对多的关系，</p>
+<p><strong>在 RBAC 中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。</strong></p>
+<p>这样的目的，就是权限与角色进行绑定，用户在页面控制的是角色的权限，而不是用户的权限，提高灵活度，又省去每一个用户分配权限的麻烦程度，这是一种折中的方式，去进行权限控制。</p>
+<p>通过这个权限模型，我们可以创建不同的角色并为不同的角色分配不同的权限范围（菜单）。</p>
+<p>通常来说，如果系统对于权限控制要求比较严格的话，一般都会选择使用 RBAC 模型来做权限控制。</p>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p><code>Cookie</code> 和 <code>Session</code> 都是用来跟踪浏览器用户身份的会话方式，但是两者的应用场景不太一样。</p>
+<p>维基百科是这样定义 <code>Cookie</code> 的：</p>
+<blockquote>
+<p><code>Cookies</code> 是某些网站为了辨别用户身份而储存在用户本地终端上的数据（通常经过加密）。</p>
+</blockquote>
+<p>简单来说： **<code>Cookie</code> 存放在客户端，用于存储客户信息。</p>
+<p>下面是 <code>Cookie</code> 的一些应用案例：</p>
+<ol>
+<li>我们在 <code>Cookie</code> 中保存已经登录过的用户信息，下次访问网站的时候页面可以自动帮你登录的一些基本信息给填了。除此之外，<code>Cookie</code> 还能保存用户首选项，主题和其他设置信息。</li>
+<li>使用 <code>Cookie</code> 保存 <code>SessionId</code> 或者 <code>Token</code> ，向后端发送请求的时候带上 <code>Cookie</code>，这样后端就能取到 <code>Session</code> 或者 <code>Token</code> 了。这样就能记录用户当前的状态了，因为 HTTP 协议是无状态的。</li>
+<li><code>Cookie</code> 还可以用来记录和分析用户行为。举个简单的例子你在网上购物的时候，因为 HTTP 协议是没有状态的，如果服务器想要获取你在某个页面的停留状态或者看了哪些商品，一种常用的实现方式就是将这些信息存放在 <code>Cookie</code></li>
+</ol>
+]]></content>
+      <categories>
+        <category>系统设计</category>
+      </categories>
+      <tags>
+        <tag>安全</tag>
       </tags>
   </entry>
   <entry>
@@ -253,45 +288,11 @@
       </categories>
   </entry>
   <entry>
-    <title>认证授权基础</title>
-    <url>/2022/03/24/%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83/</url>
-    <content><![CDATA[<h2 id="认证-和授权？"><a href="#认证-和授权？" class="headerlink" title="认证 和授权？"></a>认证 和授权？</h2><p>这是一个绝大多数人都会混淆的问题。首先先从读音上来认识这两个名词，很多人都会把它俩的读音搞混，所以我建议你先先去查一查这两个单词到底该怎么读，他们的具体含义是什么。</p>
-<ul>
-<li><strong>认证</strong> ：验证其身份，一般来说，登陆成功，就是知道了你的身份可以登录，就算认证成功。</li>
-<li><strong>授权</strong> ：认证成功，根据当前用户身份，让系统知道该用户能够访问哪一些权限。</li>
-</ul>
-<p>认证、授权这两个功能一般在我们的系统中被结合在一起使用，目的就是为了保护我们系统的安全性：目前有shiro，spring security这些框架能够做一些事情，spring security是基于spring开发的，完美适配，不过该框架过重，shiro需要和spring进行整合，当然，如果是简单的认证过程，通过随机生成的token就能够完成客户端以及服务器间的认证过程。</p>
-<h2 id="RBAC-模型"><a href="#RBAC-模型" class="headerlink" title="RBAC 模型"></a>RBAC 模型</h2><p>RBAC 即基于角色的权限访问控制（Role-Based Access Control）。这是一种通过角色关联权限，角色同时又关联用户的授权的方式。</p>
-<p>简单地说：一个用户可以拥有若干角色，每一个角色又可以被分配若干权限，这样就构造成“用户-角色-权限” 的授权模型。在这种模型中，用户与角色、角色与权限之间构成了多对多的关系，</p>
-<p><strong>在 RBAC 中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。</strong></p>
-<p>这样的目的，就是权限与角色进行绑定，用户在页面控制的是角色的权限，而不是用户的权限，提高灵活度，又省去每一个用户分配权限的麻烦程度，这是一种折中的方式，去进行权限控制。</p>
-<p>通过这个权限模型，我们可以创建不同的角色并为不同的角色分配不同的权限范围（菜单）。</p>
-<p>通常来说，如果系统对于权限控制要求比较严格的话，一般都会选择使用 RBAC 模型来做权限控制。</p>
-<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p><code>Cookie</code> 和 <code>Session</code> 都是用来跟踪浏览器用户身份的会话方式，但是两者的应用场景不太一样。</p>
-<p>维基百科是这样定义 <code>Cookie</code> 的：</p>
-<blockquote>
-<p><code>Cookies</code> 是某些网站为了辨别用户身份而储存在用户本地终端上的数据（通常经过加密）。</p>
-</blockquote>
-<p>简单来说： **<code>Cookie</code> 存放在客户端，用于存储客户信息。</p>
-<p>下面是 <code>Cookie</code> 的一些应用案例：</p>
-<ol>
-<li>我们在 <code>Cookie</code> 中保存已经登录过的用户信息，下次访问网站的时候页面可以自动帮你登录的一些基本信息给填了。除此之外，<code>Cookie</code> 还能保存用户首选项，主题和其他设置信息。</li>
-<li>使用 <code>Cookie</code> 保存 <code>SessionId</code> 或者 <code>Token</code> ，向后端发送请求的时候带上 <code>Cookie</code>，这样后端就能取到 <code>Session</code> 或者 <code>Token</code> 了。这样就能记录用户当前的状态了，因为 HTTP 协议是无状态的。</li>
-<li><code>Cookie</code> 还可以用来记录和分析用户行为。举个简单的例子你在网上购物的时候，因为 HTTP 协议是没有状态的，如果服务器想要获取你在某个页面的停留状态或者看了哪些商品，一种常用的实现方式就是将这些信息存放在 <code>Cookie</code></li>
-</ol>
-]]></content>
-      <categories>
-        <category>系统设计</category>
-      </categories>
-      <tags>
-        <tag>安全</tag>
-      </tags>
-  </entry>
-  <entry>
     <title></title>
     <url>/2023/02/12/leanrning/README/</url>
-    <content><![CDATA[<h1 id="leanrning"><a href="#leanrning" class="headerlink" title="leanrning"></a>leanrning</h1><hr>
+    <content><![CDATA[<h1 id="learnning"><a href="#learnning" class="headerlink" title="learnning"></a>learnning</h1><hr>
 <p>hard study</p>
+<p>improving</p>
 ]]></content>
   </entry>
   <entry>
@@ -311,6 +312,320 @@
         <tag>mysql</tag>
         <tag>数据库</tag>
         <tag>结构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>redis分布式锁</title>
+    <url>/2023/02/12/leanrning/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</url>
+    <content><![CDATA[<span id="more"></span>
+
+
+
+<p>在实际项目中见过分布式锁后，就不难理解为什么要用分布式锁了。总的来说就是分布式系统要访问共享资源，为了避免并发访问资源带来的错误，我们为共享资源添加一把锁，让各个访问互斥，保证并发访问的安全性，这就是使用分布式锁的原因。</p>
+<h6 id="Redis中分布式锁的实现"><a href="#Redis中分布式锁的实现" class="headerlink" title="Redis中分布式锁的实现"></a>Redis中分布式锁的实现</h6><h3 id="常见分布式锁方案对比"><a href="#常见分布式锁方案对比" class="headerlink" title="常见分布式锁方案对比"></a>常见分布式锁方案对比</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>方案</th>
+<th>实现原理</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基于数据库</td>
+<td>基于mysql 表唯一索引</td>
+<td>1.表增加唯一索引 2.加锁：执行insert语句，若报错，则表明加锁失败 3.解锁：执行delete语句</td>
+<td>完全利用DB现有能力，实现简单</td>
+<td>1.锁无超时自动失效机制，有死锁风险 2.不支持锁重入，不支持阻塞等待 3.操作数据库开销大，性能不高</td>
+</tr>
+<tr>
+<td>基于MongoDB findAndModify原子操作</td>
+<td>1.加锁：执行findAndModify原子命令查找document，若不存在则新增 2.解锁：删除document</td>
+<td>实现也很容易，较基于MySQL唯一索引的方案，性能要好很多</td>
+<td>1.大部分公司数据库用MySQL，可能缺乏相应的MongoDB运维、开发人员 2.锁无超时自动失效机制</td>
+<td></td>
+</tr>
+<tr>
+<td>基于分布式协调系统</td>
+<td>基于ZooKeeper</td>
+<td>1.加锁：在&#x2F;lock目录下创建临时有序节点，判断创建的节点序号是否最小。若是，则表示获取到锁；否，则则watch &#x2F;lock目录下序号比自身小的前一个节点 2.解锁：删除节点</td>
+<td>1.由zk保障系统高可用 2.Curator框架已原生支持系列分布式锁命令，使用简单</td>
+<td>需单独维护一套zk集群，维保成本高</td>
+</tr>
+<tr>
+<td>基于缓存</td>
+<td>基于redis命令</td>
+<td>1. 加锁：执行setnx，若成功再执行expire添加过期时间 2. 解锁：执行delete命令</td>
+<td>实现简单，相比数据库和分布式系统的实现，该方案最轻，性能最好</td>
+<td>1.setnx和expire分2步执行，非原子操作；若setnx执行成功，但expire执行失败，就可能出现死锁 2.delete命令存在误删除非当前线程持有的锁的可能 3.不支持阻塞等待、不可重入</td>
+</tr>
+<tr>
+<td>基于redis Lua脚本能力</td>
+<td>1. 加锁：执行SET lock_name random_value EX seconds NX 命令  2. 解锁：执行Lua脚本，释放锁时验证random_value  – ARGV[1]为random_value, KEYS[1]为lock_nameif redis.call(“get”, KEYS[1]) &#x3D;&#x3D; ARGV[1] then  return redis.call(“del”,KEYS[1])else  return 0end</td>
+<td>同上；实现逻辑上也更严谨，除了单点问题，生产环境采用用这种方案，问题也不大。</td>
+<td>不支持锁重入，不支持阻塞等待</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="Redis分布式锁方案一：SETNX-EXPIRE"><a href="#Redis分布式锁方案一：SETNX-EXPIRE" class="headerlink" title="Redis分布式锁方案一：SETNX + EXPIRE"></a>Redis分布式锁方案一：SETNX + EXPIRE</h3><p>提到Redis的分布式锁，很多小伙伴马上就会想到<code>setnx</code>+ <code>expire</code>命令。即先用<code>setnx</code>来抢锁，如果抢到之后，再用<code>expire</code>给锁设置一个过期时间，防止锁忘记了释放。</p>
+<blockquote>
+<p>SETNX 是SET IF NOT EXISTS的简写.日常命令格式是SETNX key value，如果 key不存在，则SETNX成功返回1，如果这个key已经存在了，则返回0。</p>
+</blockquote>
+<p>假设某电商网站的某商品做秒杀活动，key可以设置为key_resource_id,value设置任意值，伪代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>（jedis.<span class="title function_">setnx</span>(key_resource_id,lock_value) == <span class="number">1</span>）&#123; <span class="comment">//加锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    expire（key_resource_id，<span class="number">100</span>）; <span class="comment">//设置过期时间</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span> something  <span class="comment">//业务请求</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">catch</span>()&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">finally</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       jedis.<span class="title function_">del</span>(key_resource_id); <span class="comment">//释放锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是这个方案中，<code>setnx</code>和<code>expire</code>两个命令分开了，<strong>「不是原子操作」</strong>。如果执行完<code>setnx</code>加锁，正要执行<code>expire</code>设置过期时间时，进程crash或者要重启维护了，那么这个锁就“长生不老”了，<strong>「别的线程永远获取不到锁啦」</strong>。</p>
+<h3 id="Redis分布式锁方案二：SETNX-value值是-系统时间-过期时间"><a href="#Redis分布式锁方案二：SETNX-value值是-系统时间-过期时间" class="headerlink" title="Redis分布式锁方案二：SETNX + value值是(系统时间+过期时间)"></a>Redis分布式锁方案二：SETNX + value值是(系统时间+过期时间)</h3><p>为了解决方案一，<strong>「发生异常锁得不到释放的场景」</strong>，有小伙伴认为，可以把过期时间放到<code>setnx</code>的value值里面。如果加锁失败，再拿出value值校验一下即可。加锁代码如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">long expires = System.currentTimeMillis() + expireTime; <span class="comment">//系统时间+设置的过期时间</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">String expiresStr = String.valueOf(expires);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果当前锁不存在，返回加锁成功</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (jedis.setnx(key_resource_id, expiresStr) == <span class="number">1</span>) &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果锁已经存在，获取锁的过期时间</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">String currentValueStr = jedis.<span class="keyword">get</span>(key_resource_id);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果获取到的过期时间，小于系统当前时间，表示已经过期</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (currentValueStr != <span class="literal">null</span> &amp;&amp; <span class="built_in">Long</span>.parseLong(currentValueStr) &lt; System.currentTimeMillis()) &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">     <span class="comment">// 锁已过期，获取上一个锁的过期时间，并设置现在锁的过期时间（不了解redis的getSet命令的小伙伴，可以去官网看下哈）</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    String oldValueStr = jedis.getSet(key_resource_id, expiresStr);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (oldValueStr != <span class="literal">null</span> &amp;&amp; oldValueStr.equals(currentValueStr)) &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">         <span class="comment">// 考虑多线程并发的情况，只有一个线程的设置值和当前值相同，它才可以加锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">         <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//其他情况，均返回加锁失败</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方案的优点是，巧妙移除<code>expire</code>单独设置过期时间的操作，把<strong>「过期时间放到setnx的value值」</strong>里面来。解决了方案一发生异常，锁得不到释放的问题。但是这个方案还有别的缺点：</p>
+<blockquote>
+<ul>
+<li>过期时间是客户端自己生成的（System.currentTimeMillis()是当前系统的时间），必须要求分布式环境下，每个客户端的时间必须同步。</li>
+<li>如果锁过期的时候，并发多个客户端同时请求过来，都执行jedis.getSet()，最终只能有一个客户端加锁成功，但是该客户端锁的过期时间，可能被别的客户端覆盖</li>
+<li>该锁没有保存持有者的唯一标识，可能被别的客户端释放&#x2F;解锁。</li>
+</ul>
+</blockquote>
+<h3 id="Redis分布式锁方案三：使用Lua脚本-包含SETNX-EXPIRE两条指令"><a href="#Redis分布式锁方案三：使用Lua脚本-包含SETNX-EXPIRE两条指令" class="headerlink" title="Redis分布式锁方案三：使用Lua脚本(包含SETNX + EXPIRE两条指令)"></a>Redis分布式锁方案三：使用Lua脚本(包含SETNX + EXPIRE两条指令)</h3><p>实际上，我们还可以使用Lua脚本来保证原子性（包含setnx和expire两条指令），lua脚本如下：</p>
+<figure class="highlight vbnet"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.<span class="keyword">call</span>(<span class="comment">&#x27;setnx&#x27;,KEYS[1],ARGV[1]) == 1 then</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   redis.<span class="keyword">call</span>(<span class="comment">&#x27;expire&#x27;,KEYS[1],ARGV[2])</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+<p>加锁代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"> <span class="title class_">String</span> lua_scripts = <span class="string">&quot;if redis.call(&#x27;setnx&#x27;,KEYS[1],ARGV[1]) == 1 then&quot;</span> +</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            <span class="string">&quot; redis.call(&#x27;expire&#x27;,KEYS[1],ARGV[2]) return 1 else return 0 end&quot;</span>;   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="title class_">Object</span> result = jedis.<span class="built_in">eval</span>(lua_scripts, <span class="title class_">Collections</span>.<span class="title function_">singletonList</span>(key_resource_id), <span class="title class_">Collections</span>.<span class="title function_">singletonList</span>(values));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//判断是否成功</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> result.<span class="title function_">equals</span>(1L);</span><br></pre></td></tr></table></figure>
+
+<p>这个方案，跟方案二对比，你觉得哪个更好呢？</p>
+<h3 id="Redis分布式锁方案方案四：SET的扩展命令（SET-EX-PX-NX）"><a href="#Redis分布式锁方案方案四：SET的扩展命令（SET-EX-PX-NX）" class="headerlink" title="Redis分布式锁方案方案四：SET的扩展命令（SET EX PX NX）"></a>Redis分布式锁方案方案四：SET的扩展命令（SET EX PX NX）</h3><p>除了使用，使用Lua脚本，保证<code>SETNX + EXPIRE</code>两条指令的原子性，我们还可以巧用Redis的SET指令扩展参数！（<code>SET key value[EX seconds][PX milliseconds][NX|XX]</code>），它也是原子性的！</p>
+<blockquote>
+<p>SET key value[EX seconds][PX milliseconds][NX|XX]</p>
+<ul>
+<li>NX :表示key不存在的时候，才能set成功，也即保证只有第一个客户端请求才能获得锁，而其他客户端请求只能等其释放锁，才能获取。</li>
+<li>EX seconds :设定key的过期时间，时间单位是秒。</li>
+<li>PX milliseconds: 设定key的过期时间，单位为毫秒</li>
+<li>XX: 仅当key存在时设置值</li>
+</ul>
+</blockquote>
+<p>伪代码demo如下：</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>（jedis.<span class="keyword">set</span>(key_resource_id, lock_value, <span class="string">&quot;NX&quot;</span>, <span class="string">&quot;EX&quot;</span>, <span class="number">100</span>s) == <span class="number">1</span>）&#123; <span class="comment">//加锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span> something  <span class="comment">//业务处理</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">catch</span>()&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">finally</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       jedis.del(key_resource_id); <span class="comment">//释放锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是呢，这个方案还是可能存在问题：</p>
+<ul>
+<li>问题一：<strong>「锁过期释放了，业务还没执行完」</strong>。假设线程a获取锁成功，一直在执行临界区的代码。但是100s过去后，它还没执行完。但是，这时候锁已经过期了，此时线程b又请求过来。显然线程b就可以获得锁成功，也开始执行临界区的代码。那么问题就来了，临界区的业务代码都不是严格串行执行的啦。</li>
+<li>问题二：<strong>「锁被别的线程误删」</strong>。假设线程a执行完后，去释放锁。但是它不知道当前的锁可能是线程b持有的（线程a去释放锁时，有可能过期时间已经到了，此时线程b进来占有了锁）。那线程a就把线程b的锁释放掉了，但是线程b临界区业务代码可能都还没执行完呢。</li>
+</ul>
+<h3 id="方案五：SET-EX-PX-NX-校验唯一随机值-再删除"><a href="#方案五：SET-EX-PX-NX-校验唯一随机值-再删除" class="headerlink" title="方案五：SET EX PX NX  + 校验唯一随机值,再删除"></a>方案五：SET EX PX NX  + 校验唯一随机值,再删除</h3><p>既然锁可能被别的线程误删，那我们给value值设置一个标记当前线程唯一的随机数，在删除的时候，校验一下，不就OK了嘛。伪代码如下：</p>
+<figure class="highlight csharp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>（jedis.<span class="keyword">set</span>(key_resource_id, uni_request_id, <span class="string">&quot;NX&quot;</span>, <span class="string">&quot;EX&quot;</span>, <span class="number">100</span>s) == <span class="number">1</span>）&#123; <span class="comment">//加锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">do</span> something  <span class="comment">//业务处理</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">catch</span>()&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">finally</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       <span class="comment">//判断是不是当前线程加的锁,是才释放</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       <span class="keyword">if</span> (uni_request_id.<span class="keyword">equals</span>(jedis.<span class="keyword">get</span>(key_resource_id))) &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        jedis.del(lockKey); <span class="comment">//释放锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，<strong>「判断是不是当前线程加的锁」</strong>和<strong>「释放锁」</strong>不是一个原子操作。如果调用jedis.del()释放锁的时候，可能这把锁已经不属于当前客户端，会解除他人加的锁。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/d509fab24d0801ddb31c5cd1d063ea30.png" alt="img"></p>
+<p>为了更严谨，一般也是用lua脚本代替。lua脚本如下：</p>
+<figure class="highlight vbnet"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> redis.<span class="keyword">call</span>(<span class="comment">&#x27;get&#x27;,KEYS[1]) == ARGV[1] then </span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> redis.<span class="keyword">call</span>(<span class="comment">&#x27;del&#x27;,KEYS[1]) </span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Redis分布式锁方案六：Redisson框架"><a href="#Redis分布式锁方案六：Redisson框架" class="headerlink" title="Redis分布式锁方案六：Redisson框架"></a>Redis分布式锁方案六：Redisson框架</h3><p>方案五还是可能存在<strong>「锁过期释放，业务没执行完」</strong>的问题。有些小伙伴认为，稍微把锁过期时间设置长一些就可以啦。其实我们设想一下，是否可以给获得锁的线程，开启一个定时守护线程，每隔一段时间检查锁是否还存在，存在则对锁的过期时间延长，防止锁过期提前释放。</p>
+<p>当前开源框架Redisson解决了这个问题。我们一起来看下Redisson底层原理图吧：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/b2978ea263a3a457ecfdd7880d3ed74e.png" alt="img"></p>
+<p>只要线程一加锁成功，就会启动一个<code>watch dog</code>看门狗，它是一个后台线程，会每隔10秒检查一下，如果线程1还持有锁，那么就会不断的延长锁key的生存时间。因此，Redisson就是使用Redisson解决了<strong>「锁过期释放，业务没执行完」</strong>问题。</p>
+<h3 id="Redis分布式锁方案七：多机实现的分布式锁Redlock-Redisson"><a href="#Redis分布式锁方案七：多机实现的分布式锁Redlock-Redisson" class="headerlink" title="Redis分布式锁方案七：多机实现的分布式锁Redlock+Redisson"></a>Redis分布式锁方案七：多机实现的分布式锁Redlock+Redisson</h3><p>前面六种方案都只是基于单机版的讨论，还不是很完美。其实Redis一般都是集群部署的：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/b8d53236d0d91be7d033ff0963f5b3e7.png" alt="img"></p>
+<p>如果线程一在Redis的master节点上拿到了锁，但是加锁的key还没同步到slave节点。恰好这时，master节点发生故障，一个slave节点就会升级为master节点。线程二就可以获取同个key的锁啦，但线程一也已经拿到锁了，锁的安全性就没了。</p>
+<p>为了解决这个问题，Redis作者 antirez提出一种高级的分布式锁算法：Redlock。Redlock核心思想是这样的：</p>
+<blockquote>
+<p>搞多个Redis master部署，以保证它们不会同时宕掉。并且这些master节点是完全相互独立的，相互之间不存在数据同步。同时，需要确保在这多个master实例上，是与在Redis单实例，使用相同方法来获取和释放锁。</p>
+</blockquote>
+<p>我们假设当前有5个Redis master节点，在5台服务器上面运行这些Redis实例。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/81f6054fa609c2f08aea4aaf0f0e7302.png" alt="img"></p>
+<p>RedLock的实现步骤:如下</p>
+<blockquote>
+<ul>
+<li>1.获取当前时间，以毫秒为单位。</li>
+<li>2.按顺序向5个master节点请求加锁。客户端设置网络连接和响应超时时间，并且超时时间要小于锁的失效时间。（假设锁自动失效时间为10秒，则超时时间一般在5-50毫秒之间,我们就假设超时时间是50ms吧）。如果超时，跳过该master节点，尽快去尝试下一个master节点。</li>
+<li>3.客户端使用当前时间减去开始获取锁时间（即步骤1记录的时间），得到获取锁使用的时间。当且仅当超过一半（N&#x2F;2+1，这里是5&#x2F;2+1&#x3D;3个节点）的Redis master节点都获得锁，并且使用的时间小于锁失效时间时，锁才算获取成功。（如上图，10s&gt; 30ms+40ms+50ms+4m0s+50ms）</li>
+<li>如果取到了锁，key的真正有效时间就变啦，需要减去获取锁所使用的时间。</li>
+<li>如果获取锁失败（没有在至少N&#x2F;2+1个master实例取到锁，有或者获取锁时间已经超过了有效时间），客户端要在所有的master节点上解锁（即便有些master节点根本就没有加锁成功，也需要解锁，以防止有些漏网之鱼）。</li>
+</ul>
+</blockquote>
+<p>简化下步骤就是：</p>
+<ul>
+<li>按顺序向5个master节点请求加锁</li>
+<li>根据设置的超时时间来判断，是不是要跳过该master节点。</li>
+<li>如果大于等于3个节点加锁成功，并且使用的时间小于锁的有效期，即可认定加锁成功啦。</li>
+<li>如果获取锁失败，解锁！</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>redis</category>
+      </categories>
+      <tags>
+        <tag>分布式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SSO 单点登录</title>
+    <url>/2023/02/12/leanrning/note/sso/</url>
+    <content><![CDATA[<h3 id="1、SSO说明"><a href="#1、SSO说明" class="headerlink" title="1、SSO说明"></a>1、SSO说明</h3><p>SSO英文全称Single Sign On，单点登录。SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。<a href="https://baike.baidu.com/item/SSO/3451380">https://baike.baidu.com/item/SSO/3451380</a></p>
+<p>例如访问在网易账号中心（<a href="https://reg.163.com/">https://reg.163.com/</a> ）登录之后<br>访问以下站点都是登录状态</p>
+<ul>
+<li>网易直播 <a href="https://v.163.com/">https://v.163.com</a></li>
+<li>网易博客 <a href="https://blog.163.com/">https://blog.163.com</a></li>
+</ul>
+<h3 id="2、单点登录系统的好处"><a href="#2、单点登录系统的好处" class="headerlink" title="2、单点登录系统的好处"></a>2、单点登录系统的好处</h3><ol>
+<li><strong>用户角度</strong> :用户能够做到一次登录多次使用，无需记录多套用户名和密码，省心。</li>
+<li><strong>系统管理员角度</strong> : 管理员只需维护好一个统一的账号中心就可以了，方便。</li>
+<li><strong>新系统开发角度:</strong> 新系统开发时只需直接对接统一的账号中心即可，简化开发流程，省时。</li>
+</ol>
+<h3 id="3、设计目标"><a href="#3、设计目标" class="headerlink" title="3、设计目标"></a>3、设计目标</h3><p>本篇文章也主要是为了探讨如何设计&amp;实现一个SSO系统</p>
+<p>以下为需要实现的核心功能：</p>
+<ul>
+<li><p>单点登录</p>
+</li>
+<li><p>单点登出</p>
+</li>
+<li><p>支持跨域单点登录</p>
+</li>
+<li><p>支持跨域单点登出</p>
+</li>
+<li><p>跨域登录（主域名未登录）</p>
+</li>
+<li></li>
+</ul>
+]]></content>
+      <categories>
+        <category>系统设计</category>
+      </categories>
+      <tags>
+        <tag>安全</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring常见问题总结</title>
+    <url>/2023/02/12/leanrning/springboot/spring/</url>
+    <content><![CDATA[<p>这篇文章主要是想通过一些问题，加深大家对于 Spring 的理解，所以不会涉及太多的代码！</p>
+<p>下面的很多问题我自己在使用 Spring 的过程中也并没有注意，自己也是临时查阅了很多资料和书籍补上的。网上也有一些很多关于 Spring 常见问题&#x2F;面试题整理的文章，我感觉大部分都是互相 copy，而且很多问题也不是很好，有些回答也存在问题。所以，自己花了一周的业余时间整理了一下，希望对大家有帮助。</p>
+<h2 id="什么是-Spring-框架"><a href="#什么是-Spring-框架" class="headerlink" title="什么是 Spring 框架?"></a>什么是 Spring 框架?</h2><p>Spring 是一款开源的轻量级 Java 开发框架，旨在提高开发人员的开发效率以及系统的可维护性。</p>
+<p>Spring 翻译过来就是春天的意思，可见其目标和使命就是为 Java 程序员带来春天啊！感动！</p>
+<blockquote>
+<p>题外话 ： 语言的流行通常需要一个杀手级的应用，Spring 就是 Java 生态的一个杀手级的应用框架。</p>
+</blockquote>
+<p>我们一般说 Spring 框架指的都是 Spring Framework，它是很多模块的集合，使用这些模块可以很方便地协助我们进行开发。</p>
+<p>比如说 Spring 自带 IoC（Inverse of Control:控制反转） 和 AOP(Aspect-Oriented Programming:面向切面编程)、可以很方便地对数据库进行访问、可以很方便地集成第三方组件（电子邮件，任务，调度，缓存等等）、对单元测试支持比较好、支持 RESTful Java 应用程序的开发。</p>
+<p><img src="https://img-blog.csdnimg.cn/38ef122122de4375abcd27c3de8f60b4.png"></p>
+<p>Spring 最核心的思想就是不重新造轮子，开箱即用！</p>
+<p>Spring 提供的核心功能主要是 IoC 和 AOP。学习 Spring ，一定要把 IoC 和 AOP 的核心思想搞懂！</p>
+<ul>
+<li>Spring 官网：<a href="https://spring.io/">https://spring.io/</a></li>
+<li>Github 地址： <a href="https://github.com/spring-projects/spring-framework">https://github.com/spring-projects/spring-framework</a></li>
+</ul>
+<h2 id="列举一些重要的-Spring-模块？"><a href="#列举一些重要的-Spring-模块？" class="headerlink" title="列举一些重要的 Spring 模块？"></a>列举一些重要的 Spring 模块？</h2><p>下图对应的是 Spring4.x 版本。目前最新的 5.x 版本中 Web 模块的 Portlet 组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。</p>
+<p><img src="https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/github/javaguide/jvme0c60b4606711fc4a0b6faf03230247a.png" alt="Spring主要模块"></p>
+<p><strong>Spring Core</strong></p>
+<p>核心模块， Spring 其他所有的功能基本都需要依赖于该模块，主要提供 IoC 依赖注入功能的支持。</p>
+<p><strong>Spring Aspects</strong></p>
+<p>该模块为与 AspectJ 的集成提供支持。</p>
+<p><strong>Spring AOP</strong></p>
+<p>提供了面向切面的编程实现。</p>
+<p><strong>Spring Data Access&#x2F;Integration ：</strong></p>
+<p>Spring Data Access&#x2F;Integration 由 5 个模块组成：</p>
+<ul>
+<li>spring-jdbc : 提供了对数据库访问的抽象 JDBC。不同的数据库都有自己独立的 API 用于操作数据库，而 Java 程序只需要和 JDBC API 交互，这样就屏蔽了数据库的影响。</li>
+<li>spring-tx : 提供对事务的支持。</li>
+<li>spring-orm : 提供对 Hibernate 等 ORM 框架的支持。</li>
+<li>spring-oxm ： 提供对 Castor 等 OXM 框架的支持。</li>
+<li>spring-jms : Java 消息服务。</li>
+</ul>
+<p><strong>Spring Web</strong></p>
+<p>Spring Web 由 4 个模块组成：</p>
+<ul>
+<li>spring-web ：对 Web 功能的实现提供一些最基础的支持。</li>
+<li>spring-webmvc ： 提供对 Spring MVC 的实现。</li>
+<li>spring-websocket ： 提供了对 WebSocket 的支持，WebSocket 可以让客户端和服务端进行双向通信。</li>
+<li>spring-webflux ：提供对 WebFlux 的支持。WebFlux 是 Spring Framework 5.0 中引入的新的响应式框架。与 Spring MVC 不同，它不需要 Servlet API，是完全异步.</li>
+</ul>
+<p><strong>Spring Test</strong></p>
+<p>Spring 团队提倡测试驱动开发（TDD）。有了控制反转 (IoC)的帮助，单元测试和集成测试变得更简单。</p>
+<p>Spring 的测试模块对 JUnit（单元测试框架）、TestNG（类似 JUnit）、Mockito（主要用来 Mock 对象）、PowerMock（解决 Mockito 的问题比如无法模拟 final, static， private 方法）等等常用的测试框架支持的都比较好。</p>
+<h2 id="Spring-Spring-MVC-Spring-Boot-之间什么关系"><a href="#Spring-Spring-MVC-Spring-Boot-之间什么关系" class="headerlink" title="Spring,Spring MVC,Spring Boot 之间什么关系?"></a>Spring,Spring MVC,Spring Boot 之间什么关系?</h2><p>很多人对 Spring,Spring MVC,Spring Boot 这三者傻傻分不清楚！这里简单介绍一下这三者，其实很简单，没有什么高深的东西。</p>
+<p>Spring 包含了多个功能模块（上面刚刚提高过），其中最重要的是 Spring-Core（主要提供 IoC 依赖注入功能的支持） 模块， Spring 中的其他模块（比如 Spring MVC）的功能实现基本都需要依赖于该模块。</p>
+<p>下图对应的是 Spring4.x 版本。目前最新的 5.x 版本中 Web 模块的 Portlet 组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。</p>
+<p><img src="https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/github/javaguide/jvme0c60b4606711fc4a0b6faf03230247a.png" alt="Spring主要模块"></p>
+<p>Spring MVC 是 Spring 中的一个很重要的模块，主要赋予 Spring 快速构建 MVC 架构的 Web 程序的能力。MVC 是模型(Model)、视图(View)、控制器(Controller)的简写，其核心思想是通过将业务逻辑、数据、显示分离来组织代码。</p>
+<p><img src="https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/java-guide-blog/image-20210809181452421.png"></p>
+<p>使用 Spring 进行开发各种配置过于麻烦比如开启某些 Spring 特性时，需要用 XML 或 Java 进行显式配置。于是，Spring Boot 诞生了！</p>
+<p>Spring 旨在简化 J2EE 企业应用程序开发。Spring Boot 旨在简化 Spring 开发（减少配置文件，开箱即用！）。</p>
+<p>Spring Boot 只是简化了配置，如果你需要构建 MVC 架构的 Web 程序，你还是需要使用 Spring MVC 作为 MVC 框架，只是说 Spring Boot 帮你简化了 Spring MVC 的很多配置，真正做到开箱即用！</p>
+]]></content>
+      <categories>
+        <category>框架</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Spring 设计模式总结</title>
+    <url>/2023/02/12/leanrning/springboot/spring%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<p>JDK 中用到了哪些设计模式?Spring 中用到了哪些设计模式?这两个问题，在面试中比较常见。我在网上搜索了一下关于 Spring 中设计模式的讲解几乎都是千篇一律，而且大部分都年代久远。所以，花了几天时间自己总结了一下，由于我的个人能力有限，文中如有任何错误各位都可以指出。另外，文章篇幅有限，对于设计模式以及一些源码的解读我只是一笔带过，这篇文章的主要目的是回顾一下 Spring 中的设计模式。</p>
+<p>Design Patterns(设计模式) 表示面向对象软件开发中最好的计算机编程实践。 Spring 框架中广泛使用了不同类型的设计模式，下面我们来看看到底有哪些设计模式?</p>
+<h2 id="控制反转-IoC-和依赖注入-DI"><a href="#控制反转-IoC-和依赖注入-DI" class="headerlink" title="控制反转(IoC)和依赖注入(DI)"></a>控制反转(IoC)和依赖注入(DI)</h2><p><strong>IoC(Inversion of Control,控制反转)</strong> 是Spring 中一个非常非常重要的概念，它不是什么技术，而是一种解耦的设计思想。它的主要目的是借助于“第三方”(Spring 中的 IOC 容器) 实现具有依赖关系的对象之间的解耦(IOC容器管理对象，你只管使用即可)，从而降低代码之间的耦合度。<strong>IOC 是一个原则，而不是一个模式，以下模式（但不限于）实现了IoC原则。</strong></p>
+<p><strong>Spring IOC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件&#x2F;注解即可，完全不用考虑对象是如何被创建出来的。</strong> IOC 容器负责创建对象，将对象连接在一起，配置这些对象，并从创建中处理这些对象的整个生命周期，直到它们被完全销毁。</p>
+<p>在实际项目中一个 Service 类如果有几百甚至上千个类作为它的底层，我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IOC 的话，你只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度。关于Spring IOC 的理解，推荐看这一下知乎的一个回答：<a href="https://www.zhihu.com/question/23277575/answer/169698662">https://www.zhihu.com/question/23277575/answer/169698662</a>  ，非常不错。</p>
+<p><strong>控制反转怎么理解呢?</strong> 举个例子：”对象a 依赖了对象 b，当对象 a 需要使用 对象 b的时候必须自己去创建。但是当系统引入了 IOC 容器后， 对象a 和对象 b 之前就失去了直接的联系。这个时候，当对象 a 需要使用 对象 b的时候， 我们可以指定 IOC 容器去创建一个对象b注入到对象 a 中”。 对象 a 获得依赖对象 b 的过程,由主动行为变为了被动行为，控制权反转，这就是控制反转名字的由来。</p>
+<p><strong>DI(Dependecy Inject,依赖注入)是实现控制反转的一种设计模式，依赖注入就是将实例变量传入到一个对象中去。</strong></p>
+<h2 id="工厂设计模式"><a href="#工厂设计模式" class="headerlink" title="工厂设计模式"></a>工厂设计模式</h2><p>Spring使用工厂模式可以通过 <code>BeanFactory</code> 或 <code>ApplicationContext</code> 创建 bean 对象。</p>
+<p><strong>两者对比：</strong></p>
+<ul>
+<li><code>BeanFactory</code> ：延迟注入(使用到某个 bean 的时候才会注入),相比于<code>ApplicationContext</code> 来说会占用更少的内存，程序启动速度更快。</li>
+<li><code>ApplicationContext</code> ：容器启动的时候，不管你用没用到，一次性创建所有 bean 。<code>BeanFactory</code> 仅提供了最基本的依赖注入支持，<code> ApplicationContext</code> 扩展了 <code>BeanFactory</code> ,除了有<code>BeanFactory</code>的功能还有额外更多功能，所以一般开发人员使用<code> ApplicationContext</code>会更多。</li>
+</ul>
+<p>ApplicationContext的三个实现类：</p>
+<ol>
+<li><code>ClassPathXmlApplication</code>：把上下文文件当成类路径资源。</li>
+<li><code>FileSystemXmlApplication</code>：从文件系统中的 XML 文件载入上下文定义信息。</li>
+<li><code>XmlWebApplicationContext</code>：从Web系统中的XML文件载入上下文定义信息。</li>
+</ol>
+<p>Example:</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.FileSystemXmlApplicationContext;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">App</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">		<span class="type">ApplicationContext</span> <span class="variable">context</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileSystemXmlApplicationContext</span>(</span><br><span class="line">				<span class="string">&quot;C:/work/IOC Containers/springframework.applicationcontext/src/main/resources/bean-factory-config.xml&quot;</span>);</span><br><span class="line"> </span><br><span class="line">		<span class="type">HelloApplicationContext</span> <span class="variable">obj</span> <span class="operator">=</span> (HelloApplicationContext) context.getBean(<span class="string">&quot;helloApplicationContext&quot;</span>);</span><br><span class="line">		obj.getMsg();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="单例设计模式"><a href="#单例设计模式" class="headerlink" title="单例设计模式"></a>单例设计模式</h2><p>在我们的系统中，有一些对象其实我们只需要一个，比如说：线程池、缓存、对话框、注册表、日志对象、充当打印机、显卡等设备驱动程序的对象。事实上，这一类对象只能有一个实例，如果制造出多个实例就可能会导致一些问题的产生，比如：程序的行为异常、资源使用过量、或者不一致性的结果。</p>
+<p><strong>使用单例模式的好处:</strong></p>
+<ul>
+<li>对于频繁使用的对象，可以省略创建对象所花费的时间，这对于那些重量级对象而言，是非常可观的一笔系统开销；</li>
+<li>由于 new 操作的次数减少，因而对系统内存的使用频率也会降低，这将减轻 GC 压力，缩短 GC 停顿时间。</li>
+</ul>
+<p><strong>Spring 中 bean 的默认作用域就是 singleton(单例)的。</strong> 除了 singleton 作用域，Spring 中 bean 还有下面几种作用域：</p>
+<ul>
+<li>prototype : 每次请求都会创建一个新的 bean 实例。</li>
+<li>request : 每一次HTTP请求都会产生一个新的bean，该bean仅在当前HTTP request内有效。</li>
+<li>session : 每一次HTTP请求都会产生一个新的 bean，该bean仅在当前 HTTP session 内有效。</li>
+<li>global-session： 全局session作用域，仅仅在基于portlet的web应用中才有意义，Spring5已经没有了。Portlet是能够生成语义代码(例如：HTML)片段的小型Java Web插件。它们基于portlet容器，可以像servlet一样处理HTTP请求。但是，与 servlet 不同，每个 portlet 都有不同的会话</li>
+</ul>
+<p><strong>Spring 实现单例的方式：</strong></p>
+<ul>
+<li>xml : <code>&lt;bean id=&quot;userService&quot; class=&quot;top.snailclimb.UserService&quot; scope=&quot;singleton&quot;/&gt;</code></li>
+<li>注解：<code>@Scope(value = &quot;singleton&quot;)</code></li>
+</ul>
+<p><strong>Spring 通过 <code>ConcurrentHashMap</code> 实现单例注册表的特殊方式实现单例模式。Spring 实现单例的核心代码如下</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 通过 ConcurrentHashMap（线程安全） 实现单例注册表</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; singletonObjects = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;String, Object&gt;(<span class="number">64</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getSingleton</span><span class="params">(String beanName, ObjectFactory&lt;?&gt; singletonFactory)</span> &#123;</span><br><span class="line">        Assert.notNull(beanName, <span class="string">&quot;&#x27;beanName&#x27; must not be null&quot;</span>);</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">            <span class="comment">// 检查缓存中是否存在实例  </span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">singletonObject</span> <span class="operator">=</span> <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">            <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">//...省略了很多代码</span></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    singletonObject = singletonFactory.getObject();</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//...省略了很多代码</span></span><br><span class="line">                <span class="comment">// 如果实例对象在不存在，我们注册到单例注册表中。</span></span><br><span class="line">                addSingleton(beanName, singletonObject);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> (singletonObject != NULL_OBJECT ? singletonObject : <span class="literal">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将对象添加到单例注册表</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">addSingleton</span><span class="params">(String beanName, Object singletonObject)</span> &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">                <span class="built_in">this</span>.singletonObjects.put(beanName, (singletonObject != <span class="literal">null</span> ? singletonObject : NULL_OBJECT));</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>Spring 框架中用到了哪些设计模式？</p>
+<ul>
+<li><strong>工厂设计模式</strong> : Spring使用工厂模式通过 <code>BeanFactory</code>、<code>ApplicationContext</code> 创建 bean 对象。</li>
+<li><strong>代理设计模式</strong> : Spring AOP 功能的实现。</li>
+<li><strong>单例设计模式</strong> : Spring 中的 Bean 默认都是单例的。</li>
+<li><strong>模板方法模式</strong> : Spring 中 <code>jdbcTemplate</code>、<code>hibernateTemplate</code> 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。</li>
+<li><strong>包装器设计模式</strong> : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。</li>
+<li><strong>观察者模式:</strong> Spring 事件驱动模型就是观察者模式很经典的一个应用。</li>
+<li><strong>适配器模式</strong> :Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配<code>Controller</code>。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>框架</category>
+      </categories>
+      <tags>
+        <tag>Spring</tag>
       </tags>
   </entry>
   <entry>

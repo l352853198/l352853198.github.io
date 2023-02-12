@@ -19,7 +19,7 @@
     <meta name="keywords" content="小李">
 
 
-<title>小李的家</title>
+<title>SSO 单点登录 | 小李的家</title>
 
 
 
@@ -239,7 +239,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title"></h1>
+            <h1 class="post-title">SSO 单点登录</h1>
             
                 <div class="post-meta">
                     
@@ -248,18 +248,48 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">二月 12, 2023&nbsp;&nbsp;14:25:54</a>
+                        Date: <a href="#">二月 12, 2023&nbsp;&nbsp;20:54:49</a>
                         </span>
                     
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>
+                            
+                        </span>
                     
                 </div>
             
         </header>
 
         <div class="post-content">
-            <h1 id="learnning"><a href="#learnning" class="headerlink" title="learnning"></a>learnning</h1><hr>
-<p>hard study</p>
-<p>improving</p>
+            <h3 id="1、SSO说明"><a href="#1、SSO说明" class="headerlink" title="1、SSO说明"></a>1、SSO说明</h3><p>SSO英文全称Single Sign On，单点登录。SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/SSO/3451380">https://baike.baidu.com/item/SSO/3451380</a></p>
+<p>例如访问在网易账号中心（<a target="_blank" rel="noopener" href="https://reg.163.com/">https://reg.163.com/</a> ）登录之后<br>访问以下站点都是登录状态</p>
+<ul>
+<li>网易直播 <a target="_blank" rel="noopener" href="https://v.163.com/">https://v.163.com</a></li>
+<li>网易博客 <a target="_blank" rel="noopener" href="https://blog.163.com/">https://blog.163.com</a></li>
+</ul>
+<h3 id="2、单点登录系统的好处"><a href="#2、单点登录系统的好处" class="headerlink" title="2、单点登录系统的好处"></a>2、单点登录系统的好处</h3><ol>
+<li><strong>用户角度</strong> :用户能够做到一次登录多次使用，无需记录多套用户名和密码，省心。</li>
+<li><strong>系统管理员角度</strong> : 管理员只需维护好一个统一的账号中心就可以了，方便。</li>
+<li><strong>新系统开发角度:</strong> 新系统开发时只需直接对接统一的账号中心即可，简化开发流程，省时。</li>
+</ol>
+<h3 id="3、设计目标"><a href="#3、设计目标" class="headerlink" title="3、设计目标"></a>3、设计目标</h3><p>本篇文章也主要是为了探讨如何设计&amp;实现一个SSO系统</p>
+<p>以下为需要实现的核心功能：</p>
+<ul>
+<li><p>单点登录</p>
+</li>
+<li><p>单点登出</p>
+</li>
+<li><p>支持跨域单点登录</p>
+</li>
+<li><p>支持跨域单点登出</p>
+</li>
+<li><p>跨域登录（主域名未登录）</p>
+</li>
+<li></li>
+</ul>
 
         </div>
 
@@ -274,7 +304,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://lizhengdong.tech/2023/02/12/leanrning/README/">http://lizhengdong.tech/2023/02/12/leanrning/README/</a></span>
+                        <span><a href="http://lizhengdong.tech/2023/02/12/leanrning/note/sso/">http://lizhengdong.tech/2023/02/12/leanrning/note/sso/</a></span>
                     </p>
                 
                 
@@ -297,6 +327,10 @@
                 <span>Tag(s):</span>
                 <span class="tag">
                     
+                    
+                        <a href="/tags/%E5%AE%89%E5%85%A8/"># 安全</a>
+                    
+                        
                 </span>
             </div>
             <div>
@@ -307,10 +341,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/02/12/leanrning/note/sso/">SSO 单点登录</a>
+                <a class="prev" rel="prev" href="/2023/02/12/leanrning/springboot/spring%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">Spring 设计模式总结</a>
             
             
-            <a class="next" rel="next" href="/2023/02/12/leanrning/mysql/%E7%B4%A2%E5%BC%95/">索引</a>
+            <a class="next" rel="next" href="/2023/02/12/leanrning/README/"></a>
             
         </section>
 
