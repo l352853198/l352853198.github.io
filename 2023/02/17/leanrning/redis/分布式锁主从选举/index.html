@@ -19,7 +19,7 @@
     <meta name="keywords" content="小李">
 
 
-<title>SSO 单点登录 | 小李的家</title>
+<title>分布式锁主从选举 | 小李的家</title>
 
 
 
@@ -239,7 +239,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">SSO 单点登录</h1>
+            <h1 class="post-title">分布式锁主从选举</h1>
             
                 <div class="post-meta">
                     
@@ -248,14 +248,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">二月 12, 2023&nbsp;&nbsp;20:54:49</a>
+                        Date: <a href="#">二月 17, 2023&nbsp;&nbsp;20:48:57</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">系统设计</a>
+                                <a href="/categories/redis/">redis</a>
                             
                         </span>
                     
@@ -264,32 +264,18 @@
         </header>
 
         <div class="post-content">
-            <h3 id="1、SSO说明"><a href="#1、SSO说明" class="headerlink" title="1、SSO说明"></a>1、SSO说明</h3><p>SSO英文全称Single Sign On，单点登录。SSO是在多个应用系统中，用户只需要登录一次就可以访问所有相互信任的应用系统。<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/SSO/3451380">https://baike.baidu.com/item/SSO/3451380</a></p>
-<p>例如访问在网易账号中心（<a target="_blank" rel="noopener" href="https://reg.163.com/">https://reg.163.com/</a> ）登录之后<br>访问以下站点都是登录状态</p>
-<ul>
-<li>网易直播 <a target="_blank" rel="noopener" href="https://v.163.com/">https://v.163.com</a></li>
-<li>网易博客 <a target="_blank" rel="noopener" href="https://blog.163.com/">https://blog.163.com</a></li>
-</ul>
-<h3 id="2、单点登录系统的好处"><a href="#2、单点登录系统的好处" class="headerlink" title="2、单点登录系统的好处"></a>2、单点登录系统的好处</h3><ol>
-<li><strong>用户角度</strong> :用户能够做到一次登录多次使用，无需记录多套用户名和密码，省心。</li>
-<li><strong>系统管理员角度</strong> : 管理员只需维护好一个统一的账号中心就可以了，方便。</li>
-<li><strong>新系统开发角度:</strong> 新系统开发时只需直接对接统一的账号中心即可，简化开发流程，省时。</li>
+            <h5 id="为什么要做主从选举"><a href="#为什么要做主从选举" class="headerlink" title="为什么要做主从选举"></a>为什么要做主从选举</h5><p>​	目前服务为集群模式,服务有很多业务缓存在redis中,需要通过定时任务去访问第三方接口,然后定时更新到缓存当中.如果当前集群下每个节点的服务都去通过定时任务更新到缓存当中,其实是没有必要,因为每个节点的定时任务其实是有一样的,这样重复向缓存中添加,对redis压力十分大,并且是没有必要的,那么就需要将服务进行主从选举,选举出一个主服务,进行定时任务,其他从服务不进行定时任务.</p>
+<h6 id="通用情况"><a href="#通用情况" class="headerlink" title="通用情况"></a>通用情况</h6><p>用户数上升，服务要集群，如何实现主从机制，并且当主服务挂掉或停机维护时，其它任意从服务可自动变成主服务？</p>
+<h5 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h5><p>开始前，先说一下基本的实现思路：</p>
+<ol>
+<li>先有一个redisson的分布式锁RLock，名称为：leader-lock</li>
+<li>所有服务在启动的时候都去尝试获取leader锁</li>
+<li>获取锁成功的服务为主服务</li>
+<li>未获取锁的其它服务为从服务</li>
+<li>从服务每隔几秒钟一直去尝试获取leader锁，当主服务挂掉或停机时，其中一个从服务就会获取到锁变成主服务</li>
 </ol>
-<h3 id="3、设计目标"><a href="#3、设计目标" class="headerlink" title="3、设计目标"></a>3、设计目标</h3><p>本篇文章也主要是为了探讨如何设计&amp;实现一个SSO系统</p>
-<p>以下为需要实现的核心功能：</p>
-<ul>
-<li><p>单点登录</p>
-</li>
-<li><p>单点登出</p>
-</li>
-<li><p>支持跨域单点登录</p>
-</li>
-<li><p>支持跨域单点登出</p>
-</li>
-<li><p>跨域登录（主域名未登录）</p>
-</li>
-<li></li>
-</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">           <span class="keyword">while</span> (!stop) &#123;</span><br><span class="line">               <span class="keyword">try</span> &#123;</span><br><span class="line">                   <span class="keyword">if</span> (isMaster) &#123;</span><br><span class="line">                       <span class="keyword">synchronized</span> (masterLock) &#123;</span><br><span class="line">                           <span class="keyword">if</span> (isInit) &#123;</span><br><span class="line">                               masterLock.wait();</span><br><span class="line">                           &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                               masterLock.wait(Duration.ofSeconds(WAIT_SECONDS).toMillis());</span><br><span class="line">                           &#125;</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                       isMaster = leaderLock.tryLock(WAIT_SECONDS, TimeUnit.SECONDS);</span><br><span class="line">                       <span class="keyword">if</span> (isMaster) &#123;</span><br><span class="line">                           logger.info(<span class="string">&quot;got leadership&quot;</span>);</span><br><span class="line">                           notifyElected();</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line"></span><br><span class="line">               &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">                   <span class="keyword">synchronized</span> (initLock) &#123;</span><br><span class="line">                       <span class="keyword">if</span> (!isInit) &#123;</span><br><span class="line">                           initLock.notifyAll();</span><br><span class="line">                           isInit = <span class="literal">true</span>;</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (leaderLock.isLocked() &amp;&amp; leaderLock.isHeldByCurrentThread()) &#123;</span><br><span class="line">               leaderLock.unlock();</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (isMaster) &#123;</span><br><span class="line">               isMaster = <span class="literal">false</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+
 
         </div>
 
@@ -304,7 +290,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="http://lizhengdong.tech/2023/02/12/leanrning/note/sso/">http://lizhengdong.tech/2023/02/12/leanrning/note/sso/</a></span>
+                        <span><a href="http://lizhengdong.tech/2023/02/17/leanrning/redis/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%B8%BB%E4%BB%8E%E9%80%89%E4%B8%BE/">http://lizhengdong.tech/2023/02/17/leanrning/redis/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%B8%BB%E4%BB%8E%E9%80%89%E4%B8%BE/</a></span>
                     </p>
                 
                 
@@ -328,7 +314,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/%E5%AE%89%E5%85%A8/"># 安全</a>
+                        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"># 分布式</a>
                     
                         
                 </span>
@@ -341,10 +327,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2023/02/12/leanrning/redis/redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/">redis分布式锁</a>
             
-            
-            <a class="next" rel="next" href="/2023/02/12/leanrning/README/"></a>
+            <a class="next" rel="next" href="/2023/02/17/leanrning/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Listener/">监听器模式</a>
             
         </section>
 
